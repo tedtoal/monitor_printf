@@ -22,7 +22,7 @@ void monitor_printf::begin(bool enable, uint16_t buf_size, unsigned long baud,
   if (_enabled) {
     // This delay seems to be necessary, at least for SAMD21 hardware.
     delay(1000);
-    Serial.begin(speed, config);
+    Serial.begin(baud, config);
     // Discard anything in serial receive buffer.
     while (!Serial);
     // Final delay.
@@ -52,7 +52,7 @@ void monitor_printf::printf(const char* format, ...) {
     int N = vsnprintf(_buf, _buf_size, format, args);
     // Reallocate a larger buffer if it was too small.
     if (N >= 0 && N < _buf_size) {
-      set_buf_size(N+1);
+      setBufSize(N+1);
       N = vsnprintf(_buf, _buf_size, format, args);
     }
     va_end(args);
