@@ -14,10 +14,9 @@ class monitor_printf {
 protected:
   bool _enabled;
   uint16_t _buf_size;
-  char* _buf;
+  char *_buf;
 
 public:
-
   /**************************************************************************/
   /*!
     @brief    Constructor.
@@ -36,7 +35,7 @@ public:
                 }
   */
   /**************************************************************************/
-  monitor_printf() : _enabled(false), _buf_size(0), _buf(NULL) { }
+  monitor_printf() : _enabled(false), _buf_size(0), _buf(NULL) {}
 
   /**************************************************************************/
   /*!
@@ -63,7 +62,7 @@ public:
   */
   /**************************************************************************/
   void begin(bool enable = false, uint16_t buf_size = 150,
-    unsigned long baud = 115200, byte config = SERIAL_8N1);
+             unsigned long baud = 115200, byte config = SERIAL_8N1);
 
   /**************************************************************************/
   /*!
@@ -71,7 +70,7 @@ public:
     @returns  true if enabled, false if disabled.
   */
   /**************************************************************************/
-  bool isEnabled(void) { return(_enabled); }
+  bool isEnabled(void) { return (_enabled); }
 
   /**************************************************************************/
   /*!
@@ -84,10 +83,11 @@ public:
   /**************************************************************************/
   /*!
     @brief    Get current buffer size.
-    @returns  Buffer size in characters including 1 for final nul, 0 if no buffer
+    @returns  Buffer size in characters including 1 for final nul, 0 if no
+    buffer
   */
   /**************************************************************************/
-  uint16_t getBufSize(void) { return(_buf_size); }
+  uint16_t getBufSize(void) { return (_buf_size); }
 
   /**************************************************************************/
   /*!
@@ -113,7 +113,7 @@ public:
               automatically reallocated here to a large enough size.
   */
   /**************************************************************************/
-  void printf(const char* format, ...);
+  void printf(const char *format, ...);
 };
 
 /**************************************************************************/
