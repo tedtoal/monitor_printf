@@ -1,19 +1,11 @@
-# monitor_printf
-
----
+# monitor_printf change log
 ---
 
 ## Table of Contents
 
-* [Changelog](#changelog)
-  * [Release v1.2.1](#release-v121)
-  * [Release v1.1.1](#release-v111)
-
-
+* [Release v1.2.1](#release-v121)
+* [Release v1.1.1](#release-v111)
 ---
----
-
-## Changelog
 
 ### Release v1.2.1
 
@@ -24,5 +16,4 @@
 ### Release v1.1.1
 
 1. Initial release.
-
-
+   
