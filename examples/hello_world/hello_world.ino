@@ -1,7 +1,7 @@
 #include <monitor_printf.h>
 
 void setup() {
-  monitor.begin(true, 150, 115200);
+  monitor.begin(true, 115200);
   monitor.printf("Hello world!\n");
 }
 

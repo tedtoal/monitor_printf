@@ -1,6 +1,7 @@
 /*
   monitor_printf.h - Defines class monitor_printf containing a function to do
-  printfs to the serial monitor, with one global instance of it.
+  printfs to a serial port, with one global instance that prints to the Arduino
+  IDE serial monitor port.
   Created by Ted Toal, July 5, 2023.
   Released into the public domain.
 */
@@ -9,9 +10,12 @@
 
 #include <Arduino.h>
 
+#define INITIAL_MONITOR_PRINTF_BUF_SIZE 150
+
 class monitor_printf {
 
 protected:
+  HardwareSerial* _serial;
   bool _enabled;
   uint16_t _buf_size;
   char *_buf;
@@ -35,7 +39,8 @@ public:
                 }
   */
   /**************************************************************************/
-  monitor_printf() : _enabled(false), _buf_size(0), _buf(NULL) {}
+  monitor_printf(HardwareSerial* serial) : _serial(serial), _enabled(false),
+    _buf_size(0), _buf(NULL) {}
 
   /**************************************************************************/
   /*!
@@ -50,7 +55,6 @@ public:
     @param    enable      true to enable printing, false skips initialization
                           of the Serial object using baud and config and it
                           makes printf do nothing
-    @param    buf_size    initial size limit for a string printed by printf
     @param    baud        serial port speed in bits/second
     @param    config      SERIAL_ constant defining data, parity, and stop bits
     @note     When enable is true, this initializes the Serial object with baud
@@ -61,8 +65,8 @@ public:
               final system with no USB), else your system will hang.
   */
   /**************************************************************************/
-  void begin(bool enable = false, uint16_t buf_size = 150,
-             unsigned long baud = 115200, byte config = SERIAL_8N1);
+  void begin(bool enable = false, unsigned long baud = 115200,
+    byte config = SERIAL_8N1);
 
   /**************************************************************************/
   /*!
@@ -70,7 +74,7 @@ public:
     @returns  true if enabled, false if disabled.
   */
   /**************************************************************************/
-  bool isEnabled(void) { return (_enabled); }
+  const bool isEnabled(void) { return (_enabled); }
 
   /**************************************************************************/
   /*!
@@ -87,7 +91,7 @@ public:
     buffer
   */
   /**************************************************************************/
-  uint16_t getBufSize(void) { return (_buf_size); }
+  const uint16_t getBufSize(void) { return (_buf_size); }
 
   /**************************************************************************/
   /*!
@@ -118,14 +122,16 @@ public:
 
 /**************************************************************************/
 /*!
-  @brief    'the_monitor_printf' is the single global instance of a
-            monitor_printf object, and it can be referred to using the #define
-            'monitor' (unless that is disabled with DONT_DEFINE_monitor).
+  @brief    An instance of a monitor_printf class object is defined, and its
+            "serial" serial port pointer is &Serial, which is the standard
+            serial port object used to talk to the Arduino IDE serial monitor.
+            You can also refer to the_monitor_printf using the #define 'monitor'
+            below (unless that is disabled with DONT_DEFINE_monitor).
 */
 /**************************************************************************/
-
 extern monitor_printf the_monitor_printf;
 
+// #define DONT_DEFINE_monitor before #including file to not define 'monitor'
 #ifndef DONT_DEFINE_monitor
 #define monitor the_monitor_printf
 #endif
