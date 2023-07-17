@@ -24,6 +24,9 @@ public:
   /**************************************************************************/
   /*!
     @brief    Constructor.
+    @param    serial  Pointer to HardwareSerial object for the serial port to be
+                      printf-ed to, or NULL to defer setting the port until
+                      begin() is called.
     @note     Example:
                 #include <monitor_printf.h>
                 void setup() {
@@ -39,8 +42,8 @@ public:
                 }
   */
   /**************************************************************************/
-  monitor_printf(HardwareSerial* serial) : _serial(serial), _enabled(false),
-    _buf_size(0), _buf(NULL) {}
+  monitor_printf(HardwareSerial* serial = NULL) : _serial(serial),
+    _enabled(false), _buf_size(0), _buf(NULL) {}
 
   /**************************************************************************/
   /*!
@@ -52,20 +55,23 @@ public:
   /**************************************************************************/
   /*!
     @brief    Initialize monitor_printf object.
-    @param    enable      true to enable printing, false skips initialization
-                          of the Serial object using baud and config and it
-                          makes printf do nothing
-    @param    baud        serial port speed in bits/second
-    @param    config      SERIAL_ constant defining data, parity, and stop bits
-    @note     When enable is true, this initializes the Serial object with baud
-              and config, empties the Serial input buffer, and does short
-              delays to ensure smooth operation. If false, that initialization
-              is not done and must be done externally to this. Be sure to use
-              false for enable when running WITHOUT A USB connection (in your
-              final system with no USB), else your system will hang.
+    @param    serial      Pointer to HardwareSerial object for the serial port
+                          to be printf-ed to, or NULL to keep the port that was
+                          set with the constructor 'serial' argument.
+    @param    baud        serial port speed in bits/second.
+    @param    config      SERIAL_ constant defining data, parity, and stop bits.
+    @note     When 'serial' is not NULL, this initializes the HardwareSerial
+              object with baud and config, empties the Serial input buffer, does
+              short delays to ensure smooth operation, and enables printfs. If
+              'serial' is NULL, that initialization is not done and printfs
+              remain disabled.
+    @note     Use NULL for your standard monitor serial port when running
+              WITHOUT A USB connection (in your final system with no USB), else
+              your system will hang because the "Serial" object doesn't exist in
+              that case.
   */
   /**************************************************************************/
-  void begin(bool enable = false, unsigned long baud = 115200,
+  void begin(HardwareSerial* serial = NULL, unsigned long baud = 115200,
     byte config = SERIAL_8N1);
 
   /**************************************************************************/
@@ -79,16 +85,15 @@ public:
   /**************************************************************************/
   /*!
     @brief    Set enable state.
-    @param    enable    true to enable printing, false makes printf do nothing
+    @param    enable    true to enable printing, false makes printf do nothing.
   */
   /**************************************************************************/
-  void setEnabled(bool enable) { _enabled = enable; }
+  void setEnabled(bool enable) { _enabled = (_serial != NULL) && enable; }
 
   /**************************************************************************/
   /*!
     @brief    Get current buffer size.
-    @returns  Buffer size in characters including 1 for final nul, 0 if no
-    buffer
+    @returns  Buffer size in chars including 1 for final nul, 0 if no buffer.
   */
   /**************************************************************************/
   const uint16_t getBufSize(void) { return (_buf_size); }
@@ -97,16 +102,16 @@ public:
   /*!
     @brief    Set buffer size.
     @param    buf_size  Buffer size in characters including 1 for final nul, or
-                        0 to only deallocate current buffer, if any
+                        0 to only deallocate current buffer, if any.
     @note     It is not necessary for the user to call this function, as the
-              buffer size is managed automatically, see printf() note
+              buffer size is managed automatically, see printf() note.
   */
   /**************************************************************************/
   void setBufSize(uint16_t buf_size);
 
   /**************************************************************************/
   /*!
-    @brief    print string to serial monitor using printf-style format string
+    @brief    print string to serial monitor using printf-style format string.
     @param    format    Format string just like for printf(). Note that some
                         specifiers may not be supported under some versions and
                         settings of some hardware platforms.
@@ -122,14 +127,20 @@ public:
 
 /**************************************************************************/
 /*!
-  @brief    An instance of a monitor_printf class object is defined, and its
-            "serial" serial port pointer is &Serial, which is the standard
-            serial port object used to talk to the Arduino IDE serial monitor.
-            You can also refer to the_monitor_printf using the #define 'monitor'
+  @brief    An instance of a monitor_printf class object is defined with a
+            "serial" serial port pointer equal to NULL.
+  @note     #define DONT_DEFINE_the_serial_monitor before #including file to not
+            create the 'the_monitor_printf' instance.
+  @note     You would normally set the serial port to "Serial" when calling the
+            begin() function, unless you are releasing a version without a USB
+            serial port, in which case you would set it to NULL.
+  @note     You can also refer to the_monitor_printf using the #define 'monitor'
             below (unless that is disabled with DONT_DEFINE_monitor).
 */
 /**************************************************************************/
+#ifndef DONT_DEFINE_the_monitor_printf
 extern monitor_printf the_monitor_printf;
+#endif
 
 // #define DONT_DEFINE_monitor before #including file to not define 'monitor'
 #ifndef DONT_DEFINE_monitor

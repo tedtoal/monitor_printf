@@ -11,14 +11,20 @@
 
 /**************************************************************************/
 
-monitor_printf the_monitor_printf(&Serial);
+#ifndef DONT_DEFINE_the_monitor_printf
+monitor_printf the_monitor_printf;
+#endif
 
 /**************************************************************************/
 
-void monitor_printf::begin(bool enable, unsigned long baud, byte config) {
-  setEnabled(enable);
+void monitor_printf::begin(HardwareSerial* serial, unsigned long baud,
+    byte config) {
+  if (serial != NULL)
+    _serial = serial;
+  setEnabled(_serial != NULL);
   setBufSize(INITIAL_MONITOR_PRINTF_BUF_SIZE);
-  if (_enabled) {
+  // Only initialize serial port if 'serial' argument is not NULL.
+  if (serial != NULL) {
     // This delay seems to be necessary, at least for SAMD21 hardware.
     delay(1000);
     _serial->begin(baud, config);
