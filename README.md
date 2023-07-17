@@ -10,9 +10,16 @@ Here is sample code if you want to quickly get going:
 ```
 #include <monitor_printf.h>
 
-// Uncomment one of the two defines of MONITOR_PORT below.
-#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor.
-// #define MONITOR_PORT NULL  // Disable printf output when using WITHOUT the IDE, USB port, and serial monitor.
+// Set this to 1 to enable debug output to the serial monitor.
+// Set this to 0 when releasing code to use without the IDE, USB port, and serial monitor.
+#define USE_MONITOR_PORT 1
+
+// Define the port to be used by the global instance named "the_serial_monitor".
+#if USE_MONITOR_PORT
+#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor port identified by variable "Serial".
+#else
+#define MONITOR_PORT NULL     // Disable printf output when using WITHOUT the IDE, USB port, and serial monitor.
+#endif
 
 void setup() {
   monitor.begin(MONITOR_PORT, 115200);
@@ -55,15 +62,24 @@ Since `monitor` might possibly already be used elsewhere in your code, a method 
 
 ### Choosing a serial port OR no output
 
-After the #include, it is recommended that you provide two separate #defines of a symbol such as MONITOR_PORT. One equates it to the address of the HardwareSerial variable for the serial port to be used (usually **`&Serial`**) and the other equates it to NULL. COMMENT OUT one or the other of the two statements. For example:
+After the #include, it is recommended that you #define symbol USE_MONITOR_PORT equal to 1 when running the code with the IDE and serial monitor window, and to 0 when running it with no IDE, no USB port, and no serial monitor. After that #define, you should add a #if USE_MONITOR_PORT, and when it is 1, #define MONITOR_PORT to the address of the HardwareSerial variable for the serial port to be used (usually **`&Serial`**), then after a #else, #define it as NULL, with a final #endif. For example:
 
 ```
-// Uncomment one of the two defines of MONITOR_PORT below.
-#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor.
-// #define MONITOR_PORT NULL  // Disable printf output when using without the IDE, USB port, and serial monitor.
+// Set this to 1 to enable debug output to the serial monitor.
+// Set this to 0 when releasing code to use without the IDE, USB port, and serial monitor.
+#define USE_MONITOR_PORT 1
+
+// Define the port to be used by the global instance named "the_serial_monitor".
+#if USE_MONITOR_PORT
+#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor port identified by variable "Serial".
+#else
+#define MONITOR_PORT NULL     // Disable printf output when using WITHOUT the IDE, USB port, and serial monitor.
+#endif
 ```
 
-**It is necessary to comment out one and uncomment the other of these #defines each time you switch between running with the Arduino IDE and serial monitor, versus without it.** The above example shows the commenting to run with the IDE and serial monitor. When you change to uncomment the NULL #define, this causes printf() calls to do nothing. You don't need to remove the printf calls from your code.
+The value **`MONITOR_PORT`** is used in the call to the monitor_printf `begin()` member function to properly initialize the object for running with or without the serial monitor.
+
+**It is necessary to change the #define USE_MONITOR_PORT each time you switch between running with the Arduino IDE and serial monitor (defined as 1), versus without it (defined as 0).** The above example shows USE_MONITOR_PORT set to 1 for running with the IDE and serial monitor. When you change it to 0, this causes printf() calls to do nothing. You don't need to remove the printf calls from your code.
 
 ### Call member function `begin()` to initialize
 
@@ -77,9 +93,9 @@ void begin(HardwareSerial* serial = NULL, unsigned long baud = 115200, byte conf
 
 The first argument, **`serial`**, is normally set to **`MONITOR_PORT`**, the #define described above. This causes `serial` to be **`&Serial`** when running with the USB port connected to the Arduino IDE, or to be **`NULL`** when running without the serial port and IDE.
 
-The second and third arguments, **`baud`** and **`config`**, are only used by `begin()` when `MONITOR_PORT` is not NULL. In that case, `begin()` calls the serial port's own `begin()` function to initialize serial communications, using `baud` and `config` to set serial speed and data/parity/stop bits. You should set `baud` to the serial port speed you want to use, or omit the argument to use the default setting of 115,200 bps speed. Typically `config` is omitted to use its default of `SERIAL_8N1`.
+The second and third arguments, **`baud`** and **`config`**, are only used by `begin()` when `MONITOR_PORT` is *not* NULL. In that case, `begin()` calls the serial port's own `begin()` function to initialize serial communications, using `baud` and `config` to set serial speed and data/parity/stop bits. You should set `baud` to the serial port speed you want to use, or omit the argument to use the default setting of 115,200 bps speed. Typically `config` is omitted to use its default of `SERIAL_8N1`.
 
-If `MONITOR_PORT` is `NULL`, this *disables the printf() function, so when it is called it does nothing*. When you are running your code outside the Arduino IDE, with no USB port and no serial monitor, it is **crucial that you set `MONITOR_PRINTF` (and therefore the `serial` argument) to `NULL`**. Otherwise, your code will hang when it tries to initialize a non-existent serial port. This is why it is recommended that you define `MONITOR_PORT` at the top of the file where it is easily visible to help remind you to change it whenever you switch between running with the IDE and without it.
+If `MONITOR_PORT` is `NULL`, this *disables the printf() function, so when it is called it does nothing*. When you are running your code outside the Arduino IDE, with no USB port and no serial monitor, it is **crucial that `MONITOR_PORT` (and therefore the `serial` argument) be set to `NULL`**. Otherwise, your code will hang when it tries to initialize a non-existent serial port. This is why it is recommended that you define `USE_MONITOR_PORT` at the top of the file where it is easily visible to help remind you to change it whenever you switch between running with the IDE and without it, followed by a define of `MONITOR_PORT` to the appropriate value depending on how `USE_MONITOR_PORT` is set.
 
 In summary, the call to `begin()` will typically look like this if you want to run the serial port at 9600 bps:
 
@@ -122,7 +138,7 @@ If you don't have a good working knowledge of "%-specifiers", including features
 
 Although most standard printf() functionality should be present, I've noticed that **%u** is missing (use **`%d`** instead, not ideal but it often works for most cases).
 
-Also, something of great importance to me that was missing was the ability to format and print ``float`` and ``double`` values. These are apparently disabled in standard versions of Arduino libraries, but can be enabled through some mechanism that I have not yet figured out. If you need to print floating point values, you may want to use my **``floatToString``** library.
+Also, something often of great importance that is typically missing is the ability to format and print ``float`` and ``double`` values. These are apparently disabled in standard versions of Arduino libraries, but can be enabled through some mechanism that I have not yet figured out. If you need to print floating point values, you may want to use my **``floatToString``** library.
 
 ## Additional details for those interested
 
@@ -137,9 +153,16 @@ The `serial` argument to the `begin()` member function can be something other th
 ```
 #include <monitor_printf.h>
 
-// Uncomment one of the two defines of MONITOR_PORT below.
-#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor.
-// #define MONITOR_PORT NULL  // Disable printf output when using without the IDE, USB port, and serial monitor.
+// Set this to 1 to enable debug output to the serial monitor.
+// Set this to 0 when releasing code to use without the IDE, USB port, and serial monitor.
+#define USE_MONITOR_PORT 1
+
+// Define the port to be used by the global instance named "the_serial_monitor".
+#if USE_MONITOR_PORT
+#define MONITOR_PORT &Serial  // Enable printf output to the serial monitor port identified by variable "Serial".
+#else
+#define MONITOR_PORT NULL     // Disable printf output when using WITHOUT the IDE, USB port, and serial monitor.
+#endif
 
 // A monitor_printf instance for using port Serial2.
 monitor_printf ser2;
@@ -159,7 +182,7 @@ void loop() {
 }
 ```
 
-You might also want to use another serial port but **not use the serial port connected to the serial monitor window.** To NOT define the global instance 'the_monitor_printf', #define DONT_DEFINE_the_monitor_printf before including the library header file. You should #define DONT_DEFINE_monitor too. For example:
+You might also want to use another serial port but **not use the serial port connected to the serial monitor window.** To NOT define the global instance variable 'the_monitor_printf', #define DONT_DEFINE_the_monitor_printf before including the library header file. You should ALSO #define DONT_DEFINE_monitor. For example:
 
 ```
 // Skip defining 'monitor'.
@@ -183,7 +206,7 @@ void loop() {
 }
 ```
 
-The `monitor_printf` class C++ **constructor** function has one optional argument: a pointer to the `HardwareSerial` instance to use with the port. If the argument is omitted, NULL is used. You can use this argument to specify the serial port to be used with the instance, rather than specifying it in the `begin()` call. In that case, there are no arguments  to the `begin()` call (`serial` defaults to NULL). This is almost the same as the previous example, *except the `begin()` function skips port initialization. You must initialize the serial port yourself.* For example:
+The `monitor_printf` class C++ **constructor** function has one optional argument: a pointer to the `HardwareSerial` instance to use with the port. If the argument is omitted, NULL is used and then the serial port is specified when `begin()` is called. You can use the constructor argument to specify the serial port to be used with the instance, INSTEAD OF specifying it in the `begin()` call. In that case, there are no arguments  to the `begin()` call (`serial` defaults to NULL and other arguments are not used). This is almost the same as the previous example, *except the `begin()` function skips port initialization. You must initialize the serial port yourself.* For example:
 
 ```
 // Skip defining 'monitor'.
