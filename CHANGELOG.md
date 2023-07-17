@@ -15,13 +15,14 @@
 
 2. The 'enable' argument in the begin() function is removed and replaced with
     new argument 'serial'. See README.md for recommended way of supplying this
-    argument value to best cope with switching from use of IDE/USB to not.
-    **** BE SURE TO CHANGE YOUR CALLS TO begin() TO USE THE NEW FIRST ARG NAMED
-    'serial' INSTEAD OF 'enable' ****
+    argument value (using #defines USE_MONITOR_PRINTF and MONITOR_PRINTF) to
+    best cope with switching from use of IDE/USB to not. **** BE SURE TO CHANGE
+    YOUR CALLS TO begin() TO USE THE NEW FIRST ARG NAMED 'serial' INSTEAD OF
+    'enable' ****
 
 3. Add support for DONT_DEFINE_the_monitor_printf, see README.md.
 
-4. README.md has been extensively updated and improved.
+4. README.md has been extensively updated.
 
 ### Release v1.3.1
 

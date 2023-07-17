@@ -1,6 +1,8 @@
 # Syntax Coloring Map For monitor_printf
 
 monitor_printf	KEYWORD1
+USE_MONITOR_PORT	LITERAL1
+MONITOR_PORT	LITERAL1
 begin	KEYWORD2
 isEnabled	KEYWORD2
 setEnabled	KEYWORD2
@@ -10,3 +12,4 @@ printf	KEYWORD2
 the_monitor_printf	KEYWORD2
 monitor	KEYWORD2
 DONT_DEFINE_monitor	LITERAL1
+DONT_DEFINE_the_monitor_printf	LITERAL1

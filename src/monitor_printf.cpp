@@ -51,7 +51,7 @@ void monitor_printf::setBufSize(uint16_t buf_size) {
 }
 
 /**************************************************************************/
-void monitor_printf::printf(const char *format, ...) {
+void monitor_printf::printf(const char* format, ...) {
   if (_enabled) {
     va_list args;
     va_start(args, format);
