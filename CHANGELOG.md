@@ -3,18 +3,20 @@
 
 ## Table of Contents
 
-* [Release v1.5.1](#release-v151)
+* [Release 1.5.1](#release-151)
 * [Release v1.4.1](#release-v141)
 * [Release v1.3.1](#release-v131)
 * [Release v1.2.1](#release-v121)
 * [Release v1.1.1](#release-v111)
 ---
 
-### Release v1.5.1
+### Release 1.5.1
 
-1. No changes. The only reason for doing this release is that the Arduino Library Manager
-   did not pick up release 1.4.1, giving the comment "Release monitor_printf:1.4.1 already
-   loaded, skipping". I don't know why this is happening but I am trying one more time.
+1. No changes. The only reason for doing this release is that the Arduino
+    Library Manager did not pick up release V1.4.1, giving the comment "Release
+    monitor_printf:1.4.1 already loaded, skipping". I suspect the cause may be
+    that my release tag values were of the form "V1.4.1" instead of "1.4.1", so
+    I am trying it again, changing the release tag.
 
 ### Release v1.4.1
 
