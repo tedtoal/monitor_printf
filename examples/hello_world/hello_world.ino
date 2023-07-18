@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <monitor_printf.h>
 
 // Set this to 1 to enable debug output to the serial monitor.
