@@ -1,5 +1,5 @@
 # monitor_printf
-## library for printf to the Arduino IDE serial monitor window or to other ports
+## Library for printf to the Arduino IDE serial monitor window or to other ports
 
 This library makes it easy to use printf()-style function calls in your Arduino C++ code to print messages to the Arduino IDE serial monitor window or to other serial ports.
 
