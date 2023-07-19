@@ -3,12 +3,18 @@
 
 ## Table of Contents
 
+* [Release 1.6.1](#release-161)
 * [Release 1.5.1](#release-151)
 * [Release v1.4.1](#release-v141)
 * [Release v1.3.1](#release-v131)
 * [Release v1.2.1](#release-v121)
 * [Release v1.1.1](#release-v111)
 ---
+
+### Release 1.6.1
+
+1. Again no changes. Same as with 1.5.1, trying to get library manager to pick
+    up the release.
 
 ### Release 1.5.1
 
